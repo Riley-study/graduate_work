@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Аналитический сервис{% endblock %}</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f0f0;
+            color: #333;
+        }
+        .header {
+            background-color: #35424a;
+            color: #fff;
+            text-align: center;
+            padding: 20px;
+        }
+        .main {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 60vh;
+        }
+        .content {
+            text-align: center;
+        }
+        .footer {
+            background-color: #35424a;
+            color: #fff;
+            text-align: center;
+            padding: 20px;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+        }
+        .menu {
+            background-color: #2c3e50;
+            color: #fff;
+            padding: 20px;
+            width: 20%;
+            height: 100%;
+            position: fixed;
+            top: 0;
+            left: 0;
+        }
+
+    </style>
+</head>
+<body>
+<div class="header">
+    <h1>Аналитический сервис</h1>
+
+    <p>{% block content %}
+
+    <p>Основной текст</p>
+
+    {% endblock %}
+    </p>
+</div>
+
+<div class="menu">
+    <h2>Меню</h2>
+    <ul>
+        <li><a href="/">Главная</a></li>
+        <li><a href="/sales">Продажи</a></li>
+        <li><a href="/costs">Структура расходов</a></li>
+        <li><a href="/product_range">Продуктовый ассортимент</a></li>
+        <li><a href="/profitability">Рентабельность</a></li>
+        <li><a href="/forecasts">Тренды и прогнозы</a></li>
+        <li><a href="/indicators_by_point_of_sale">Финансовые показатели по точкам продаж</a></li>
+
+    </ul>
+</div>
+<div class="footer">
+    <p>Итоговая квалификационная работа студентки GeekBrains Медведевой Натальи по курсу "Программист Python"</p>
+</div>
+</body>
+</html>
