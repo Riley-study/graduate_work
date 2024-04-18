@@ -28,7 +28,7 @@ class Command(BaseCommand):
     #         cost.save()
 
     def handle(self, *args, **kwargs):
-        excel_data = read_excel_data("data/Sales_01.01.23_31.03.23.xlsx")
+        excel_data = read_excel_data("data/Sales_01.04.23_31.12.23.xlsx")
         list_of_revenue = []
         for index, row in excel_data.iterrows():
             revenue = Revenue_daily(product_name_id=row['product_name_id'],
