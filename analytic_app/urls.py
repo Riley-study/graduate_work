@@ -3,7 +3,7 @@ from django.urls import path, include
 from .views import index, sales, costs, product_range, profitability, forecasts, indicators_by_point_of_sale
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    path('myadmin/', admin.site.urls),
     path('', index, name='index'),
     path('sales/', sales, name='sales'),
     path('costs/', costs, name='costs'),
