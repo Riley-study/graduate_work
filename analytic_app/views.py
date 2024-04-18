@@ -1,5 +1,7 @@
 from django.shortcuts import render
 from django.http import HttpResponse
+import pandas as pd
+from .models import Revenue_daily
 
 
 def index(request):
@@ -28,3 +30,4 @@ def forecasts(request):
 
 def indicators_by_point_of_sale(request):
     return render(request, 'analytic_app/indicators_by_point_of_sale.html')
+

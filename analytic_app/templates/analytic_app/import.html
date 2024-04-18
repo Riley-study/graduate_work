@@ -1,0 +1,13 @@
+{% extends 'analytic_app/base.html' %}
+
+{% block title %}Загрузка файла базы данных{% endblock %}
+
+{% block content %}
+<h1>Загрузка файла базы данных</h1>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <input type="file" name="database_file">
+        <button type="submit">Загрузить</button>
+    </form>
+
+{% endblock %}
