@@ -41,7 +41,6 @@ def sales(request):
         plt.ioff()
         plt.figure(figsize=(10, 6))
         plt.plot(df.index, df['total_sum'], marker='o', linestyle='-')
-        # plt.title(f'Динамика продаж за {selected_month_name} 2023 года')  # Заголовок графика
         plt.xlabel('Дата')  # Название оси X
         plt.ylabel('Сумма продаж, руб.')  # Название оси Y
         plt.xticks(rotation=45)
@@ -55,15 +54,41 @@ def sales(request):
         return render(request, 'analytic_app/select_month_for_sale.html')
 
 
-
 def costs(request):
     if request.method == 'POST':
         selected_month = request.POST.get('selected_month')
-        expenses = Costs_by_month.objects.filter(month=selected_month)
-        return render(request, 'analytic_app/costs.html', {'expenses': expenses})
+        selected_month_name = MONTH_DICT[selected_month]
+        expenses = Costs_by_month.objects.filter(month=selected_month).select_related('cost_name_id').values(
+            'cost_name_id__cost_name').annotate(
+            total_expenses=Sum('amount_of_costs'))
+        # Получаем общую сумму расходов за выбранный месяц
+        total_expenses = Costs_by_month.objects.filter(month=selected_month).aggregate(total=Sum('amount_of_costs'))[
+            'total']
+
+        # Формируем списки для построения круговой диаграммы
+        categories = [expense['cost_name_id__cost_name'] for expense in expenses]
+        expenses_amounts = [expense['total_expenses'] for expense in expenses]
+
+        # Подписи на круговой диаграмме
+        labels = [f"{category} " for category, expense_amount in
+                  zip(categories, expenses_amounts)]
+
+        # Построение круговой диаграммы
+        plt.figure(figsize=(8, 8))
+        # plt.pie(expenses_amounts, labels=labels, autopct='%1.1f%%', startangle=140)
+        colors = ['#1f77b4', '#aec7e8', '#6baed6', '#98abc5', '#c6dbef']
+        plt.pie(expenses_amounts, labels=labels, autopct='%1.1f%%', startangle=140, colors=colors,
+                explode=[0.2] * len(expenses_amounts), shadow=True)
+
+        # plt.title(f'Расходы за {selected_month_name}')
+        plt.axis('equal')  # Сделать круг равной окружности
+        plt.tight_layout()
+        plt.savefig('media/costs.png')  # Сохраняем график в файл
+        image_url = '/media/costs.png'
+        return render(request, 'analytic_app/costs.html',
+                      {'chart_image': image_url, 'selected_month': selected_month_name})
     else:
         return render(request, 'analytic_app/select_month_for_costs.html')
-    # return render(request, 'analytic_app/costs.html')
 
 
 def product_range(request):

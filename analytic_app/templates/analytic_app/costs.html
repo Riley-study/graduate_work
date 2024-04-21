@@ -3,28 +3,13 @@
 {% block title %}Расходы{% endblock %}
 
 {% block content %}
-<h1>Структура расходов</h1>
-<p>Круговая диаграмма, отображающая структуру расходов.
-<p>Показывает сколько процентов приходится на сырье, аренду помещения, зарплаты сотрудников и прочее.</p>
+<h1>Расходы за период</h1>
+<p1>Круговая диаграмма, показывающая динамику расходов</p1>
 
- <h1>Monthly Expenses</h1>
-    <table>
-        <thead>
-            <tr>
-                <th>Month</th>
-                <th>cost_name</th>
-                <th>Amount</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for expense in expenses %}
-            <tr>
-                <td>{{ expense.date }}</td>
-                <td>{{ expense.cost_name }}</td>
-                <td>{{ expense.amount_of_costst }}</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-
+<div class="main">
+    <div class="content">
+        <h1>Структура расходов за {{ selected_month }} 2023 года</h1>
+        <img src="{{ chart_image }}" alt="Диаграмма расходов">
+    </div>
+</div>
 {% endblock %}
