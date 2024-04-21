@@ -7,11 +7,24 @@
 <p>Круговая диаграмма, отображающая структуру расходов.
 <p>Показывает сколько процентов приходится на сырье, аренду помещения, зарплаты сотрудников и прочее.</p>
 
-<div class="main">
-    <div class="content">
-        <h2>График или таблица</h2>
-        <p>Центральное место для графика или таблицы</p>
-    </div>
-</div>
+ <h1>Monthly Expenses</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Month</th>
+                <th>cost_name</th>
+                <th>Amount</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for expense in expenses %}
+            <tr>
+                <td>{{ expense.date }}</td>
+                <td>{{ expense.cost_name }}</td>
+                <td>{{ expense.amount_of_costst }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 
 {% endblock %}
