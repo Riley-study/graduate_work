@@ -33,6 +33,7 @@ def index(request):
 def sales(request):
     if request.method == 'POST':
         selected_month = request.POST.get('selected_month')
+        selected_year = request.POST.get('selected_year')
         selected_month_name = MONTH_DICT[selected_month]
         sales_data = Revenue_daily.objects.filter(month=selected_month)
         df = pd.DataFrame(list(sales_data.values('date', 'total_sum')))
@@ -49,14 +50,15 @@ def sales(request):
         plt.savefig('media/sales_chart_2.png')  # Сохраняем график в файл
         image_url = '/media/sales_chart_2.png'
         return render(request, 'analytic_app/sales.html',
-                      {'chart_image': image_url, 'selected_month': selected_month_name})
+                      {'chart_image': image_url, 'selected_month': selected_month_name, 'selected_year': selected_year})
     else:
-        return render(request, 'analytic_app/select_month_for_sale.html')
+        return render(request, 'analytic_app/select_month_and_year.html')
 
 
 def costs(request):
     if request.method == 'POST':
         selected_month = request.POST.get('selected_month')
+        selected_year = request.POST.get('selected_year')
         selected_month_name = MONTH_DICT[selected_month]
         expenses = Costs_by_month.objects.filter(month=selected_month).select_related('cost_name_id').values(
             'cost_name_id__cost_name').annotate(
@@ -86,9 +88,9 @@ def costs(request):
         plt.savefig('media/costs.png')  # Сохраняем график в файл
         image_url = '/media/costs.png'
         return render(request, 'analytic_app/costs.html',
-                      {'chart_image': image_url, 'selected_month': selected_month_name})
+                      {'chart_image': image_url, 'selected_month': selected_month_name, 'selected_year': selected_year})
     else:
-        return render(request, 'analytic_app/select_month_for_costs.html')
+        return render(request, 'analytic_app/select_month_and_year.html')
 
 
 def product_range(request):
