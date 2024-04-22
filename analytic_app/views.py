@@ -5,9 +5,6 @@ import os
 import matplotlib.pyplot as plt
 from .models import Revenue_daily, Costs_by_month
 from django.conf import settings
-# from io import BytesIO
-# import base64
-# from django.http import JsonResponse
 from django.db.models import Sum
 from .forms import DateRangeForm
 
@@ -32,8 +29,10 @@ def generate_histogram(start_date, end_date):
     product_names = [item['product_name_id__product_name'] for item in revenue_data]
     total_revenues = [item['total_sum'] for item in revenue_data]
     plt.bar(product_names, total_revenues)
-    plt.xlabel('Наименование')
-    plt.ylabel('Выручка')
+    # for i in range(len(product_names)):
+    #     plt.text(i, total_revenues[i], str(total_revenues[i]), ha='center', va='bottom')
+    # plt.xlabel('Наименование')
+    plt.ylabel('Выручка, руб.')
     plt.xticks(rotation=75)
     plt.tight_layout()
     plt.savefig('media/product_range.png')

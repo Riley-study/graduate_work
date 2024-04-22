@@ -3,17 +3,18 @@
 {% block title %}Продуктовый ассортимент{% endblock %}
 
 {% block content %}
+{% if chart_image %}
+<h1>Топ 10 самых продаваемых товаров за период </h1>
+<h1> {{ start_date }} - {{ end_date }} по размеру выручки </h1>
+<img src="{{ chart_image }}" alt="Гистограмма">
 
+{% else %}
 <form method="post">
     {% csrf_token %}
     <h1>Топ 10 самых продаваемых товаров за период </h1>
     {{ form.as_p }}
     <button type="submit">Показать гистограмму</button>
 </form>
-{% if chart_image %}
-<h1>Топ 10 самых продаваемых товаров за период </h1>
-<h1> {{ start_date }} - {{ end_date }} по размеру выручки </h1>
-<img src="{{ chart_image }}" alt="Гистограмма">
 {% endif %}
 
 {% endblock %}
