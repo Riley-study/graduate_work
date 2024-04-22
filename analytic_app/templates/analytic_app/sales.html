@@ -3,6 +3,7 @@
 {% block title %}Продажи за период{% endblock %}
 
 {% block content %}
+{% if chart_image %}
 <h1>Продажи за период</h1>
 <p1>График, показывающий динамику продаж</p1>
 
@@ -12,5 +13,13 @@
         <img src="{{ chart_image }}" alt="График продаж">
     </div>
 </div>
+{% else %}
+<form method="post">
+    {% csrf_token %}
+    <h1>Выберите месяц для построения графика продаж </h1>
+    {{ form.as_p }}
+    <button type="submit">Показать график</button>
+</form>
+{% endif %}
 
 {% endblock %}

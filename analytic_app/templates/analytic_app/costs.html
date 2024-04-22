@@ -3,6 +3,7 @@
 {% block title %}Расходы{% endblock %}
 
 {% block content %}
+{% if chart_image %}
 <h1>Расходы за период</h1>
 <p1>Круговая диаграмма, показывающая динамику расходов</p1>
 
@@ -12,4 +13,13 @@
         <img src="{{ chart_image }}" alt="Диаграмма расходов">
     </div>
 </div>
+{% else %}
+<form method="post">
+    {% csrf_token %}
+    <h1>Выберите месяц для построения диаграммы расходов </h1>
+    {{ form.as_p }}
+    <button type="submit">Показать диаграмму</button>
+</form>
+{% endif %}
 {% endblock %}
+

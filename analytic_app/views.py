@@ -6,22 +6,27 @@ import matplotlib.pyplot as plt
 from .models import Revenue_daily, Costs_by_month
 from django.conf import settings
 from django.db.models import Sum
-from .forms import DateRangeForm
+from .forms import DateRangeForm, MonthAndYearRangeForm
 
 MONTH_DICT = {
-    "01": "январь",
-    "02": "февраль",
-    "03": "март",
-    "04": "апрель",
-    "05": "май",
-    "06": "июнь",
-    "07": "июль",
-    "08": "август",
-    "09": "сентябрь",
+    "1": "январь",
+    "2": "февраль",
+    "3": "март",
+    "4": "апрель",
+    "5": "май",
+    "6": "июнь",
+    "7": "июль",
+    "8": "август",
+    "9": "сентябрь",
     "10": "октябрь",
     "11": "ноябрь",
     "12": "декабрь"
 }
+YEAR_DICT = {
+    "1": "2023",
+    "2": "2024",
+}
+
 
 def generate_histogram(start_date, end_date):
     revenue_data = Revenue_daily.objects.filter(date__range=[start_date, end_date]).values(
@@ -38,6 +43,7 @@ def generate_histogram(start_date, end_date):
     plt.savefig('media/product_range.png')
     image_url = '/media/product_range.png'
     return image_url
+
 
 def generate_graph(selected_month):
     sales_data = Revenue_daily.objects.filter(month=selected_month)
@@ -59,7 +65,8 @@ def generate_graph(selected_month):
 def generate_diagram(selected_month):
     expenses = Costs_by_month.objects.filter(month=selected_month).select_related('cost_name_id').values(
         'cost_name_id__cost_name').annotate(total_expenses=Sum('amount_of_costs'))
-    total_expenses = Costs_by_month.objects.filter(month=selected_month).aggregate(total=Sum('amount_of_costs'))['total']
+    total_expenses = Costs_by_month.objects.filter(month=selected_month).aggregate(total=Sum('amount_of_costs'))[
+        'total']
     categories = [expense['cost_name_id__cost_name'] for expense in expenses]
     expenses_amounts = [expense['total_expenses'] for expense in expenses]
     labels = [f"{category} " for category, expense_amount in zip(categories, expenses_amounts)]
@@ -80,26 +87,35 @@ def index(request):
 
 def sales(request):
     if request.method == 'POST':
-        selected_month = request.POST.get('selected_month')
-        selected_year = request.POST.get('selected_year')
-        selected_month_name = MONTH_DICT[selected_month]
-        image_url = generate_graph(selected_month)
+        form = MonthAndYearRangeForm(request.POST)
+        if form.is_valid():
+            selected_month = form.cleaned_data['month']
+            selected_year = form.cleaned_data['year']
+            selected_month_name = MONTH_DICT[selected_month]
+            selected_year_name = YEAR_DICT[selected_year]
+            image_url = generate_graph(selected_month)
         return render(request, 'analytic_app/sales.html',
-                      {'chart_image': image_url, 'selected_month': selected_month_name, 'selected_year': selected_year})
+                      {'chart_image': image_url, 'selected_month': selected_month_name,
+                       'selected_year': selected_year_name})
     else:
-        return render(request, 'analytic_app/select_month_and_year.html')
+        form = MonthAndYearRangeForm()
+        return render(request, 'analytic_app/sales.html', {'form': form})
 
 
 def costs(request):
     if request.method == 'POST':
-        selected_month = request.POST.get('selected_month')
-        selected_year = request.POST.get('selected_year')
-        selected_month_name = MONTH_DICT[selected_month]
-        image_url = generate_diagram(selected_month)
-        return render(request, 'analytic_app/costs.html',
+        form = MonthAndYearRangeForm(request.POST)
+        if form.is_valid():
+            selected_month = form.cleaned_data['month']
+            selected_year = form.cleaned_data['year']
+            selected_month_name = MONTH_DICT[selected_month]
+            selected_year_name = YEAR_DICT[selected_year]
+            image_url = generate_diagram(selected_month)
+            return render(request, 'analytic_app/costs.html',
                       {'chart_image': image_url, 'selected_month': selected_month_name, 'selected_year': selected_year})
     else:
-        return render(request, 'analytic_app/select_month_and_year.html')
+        form = MonthAndYearRangeForm()
+        return render(request, 'analytic_app/costs.html', {'form': form})
 
 
 def product_range_by_revenue(request):
