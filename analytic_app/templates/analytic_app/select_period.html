@@ -1,0 +1,18 @@
+{% extends 'analytic_app/base.html' %}
+
+{% block title %}Продуктовый ассортимент{% endblock %}
+
+{% block content %}
+
+
+<h1>Top 10 Products by Revenue</h1>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Generate Histogram</button>
+    </form>
+    {% if chart_image %}
+        <img src="data:image/png;base64,{{ chart_image }}" alt="Histogram">
+    {% endif %}
+
+{% endblock %}
