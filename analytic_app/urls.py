@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.urls import path, include
-from .views import index, sales, costs, product_range_by_revenue, profitability, forecasts, indicators_by_point_of_sale
+from .views import index, sales, costs, product_range_by_revenue, profitability, import_file
 
 urlpatterns = [
     path('', index, name='index'),
@@ -9,7 +9,6 @@ urlpatterns = [
     # path('selected_month/', costs, name='selected_month'),
     path('product_range/', product_range_by_revenue, name='product_range'),
     path('profitability/', profitability, name='profitability'),
-    path('forecasts/', forecasts, name='forecasts'),
-    path('indicators_by_point_of_sale/', indicators_by_point_of_sale, name='indicators_by_point_of_sale'),
+    path('import/', import_file, name='import_file'),
 
 ]

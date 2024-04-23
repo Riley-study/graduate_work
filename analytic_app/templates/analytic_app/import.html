@@ -1,0 +1,20 @@
+{% extends 'analytic_app/base.html' %}
+
+{% block title %}Тренды и прогнозы{% endblock %}
+
+{% block content %}
+{% if filename %}
+<h2>Файл успешно загружен!</h2>
+<p>Имя файла: {{ filename }}</p>
+
+{% else %}
+<h1>Загрузка файла</h1>
+<h2>Выберите файл для загрузки</h2>
+
+<form action="/import/" method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <input type="file" name="file" id="file">
+    <button type="submit">Загрузить файл</button>
+</form>
+{% endif %}
+{% endblock %}

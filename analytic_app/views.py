@@ -145,8 +145,14 @@ def profitability(request):
     return render(request, 'analytic_app/profitability.html')
 
 
-def forecasts(request):
-    return render(request, 'analytic_app/forecasts.html')
+def import_file(request):
+    if request.method == 'POST' and request.FILES['file']:
+        uploaded_file = request.FILES['file']
+        with open('media/' + uploaded_file.name, 'wb+') as destination:
+            for chunk in uploaded_file.chunks():
+                destination.write(chunk)
+        return render(request, 'analytic_app/import.html', {'filename': uploaded_file.name})
+    return render(request, 'analytic_app/import.html')
 
 
 def indicators_by_point_of_sale(request):
