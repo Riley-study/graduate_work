@@ -1,5 +1,5 @@
 from django.shortcuts import render
-# from django.http import HttpResponse
+import logging
 import pandas as pd
 import os
 import matplotlib.pyplot as plt
@@ -8,6 +8,7 @@ from django.conf import settings
 from django.db.models import Sum
 from .forms import DateRangeForm, MonthAndYearRangeForm
 
+logger = logging.getLogger(__name__)
 MONTH_DICT = {
     "1": "январь",
     "2": "февраль",
@@ -82,11 +83,13 @@ def generate_diagram(selected_month):
 
 
 def index(request):
+    logger.info('Home page accessed')
     return render(request, 'analytic_app/main_page.html')
 
 
 def sales(request):
     if request.method == 'POST':
+        logger.debug('Page with sales accessed')
         form = MonthAndYearRangeForm(request.POST)
         if form.is_valid():
             selected_month = form.cleaned_data['month']
@@ -98,12 +101,14 @@ def sales(request):
                       {'chart_image': image_url, 'selected_month': selected_month_name,
                        'selected_year': selected_year_name})
     else:
+        logger.debug('Page with empty form accessed')
         form = MonthAndYearRangeForm()
         return render(request, 'analytic_app/sales.html', {'form': form})
 
 
 def costs(request):
     if request.method == 'POST':
+        logger.debug('Page with costs accessed')
         form = MonthAndYearRangeForm(request.POST)
         if form.is_valid():
             selected_month = form.cleaned_data['month']
@@ -114,12 +119,14 @@ def costs(request):
             return render(request, 'analytic_app/costs.html',
                       {'chart_image': image_url, 'selected_month': selected_month_name, 'selected_year': selected_year})
     else:
+        logger.debug('Page with empty form accessed')
         form = MonthAndYearRangeForm()
         return render(request, 'analytic_app/costs.html', {'form': form})
 
 
 def product_range_by_revenue(request):
     if request.method == 'POST':
+        logger.debug('Page with range of product accessed')
         form = DateRangeForm(request.POST)
         if form.is_valid():
             start_date = form.cleaned_data['start_date']
@@ -128,6 +135,7 @@ def product_range_by_revenue(request):
             return render(request, 'analytic_app/product_range.html',
                           {'chart_image': image_url, 'start_date': start_date, 'end_date': end_date})
     else:
+        logger.debug('Page with empty form accessed')
         form = DateRangeForm()
     return render(request, 'analytic_app/product_range.html',
                   {'form': form})
