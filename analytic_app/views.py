@@ -6,7 +6,11 @@ import matplotlib.pyplot as plt
 from .models import Revenue_daily, Costs_by_month
 from django.conf import settings
 from django.db.models import Sum
-from .forms import DateRangeForm, MonthAndYearRangeForm
+from .forms import DateRangeForm, MonthAndYearRangeForm, YearRangeForm
+from django.db.models.functions import ExtractYear, ExtractMonth
+from django.db.models import F, Func
+from datetime import datetime
+from calendar import month_name
 
 logger = logging.getLogger(__name__)
 MONTH_DICT = {
@@ -82,6 +86,44 @@ def generate_diagram(selected_month):
     return image_url
 
 
+def generate_profit_graph(selected_year):
+    revenue_data = Revenue_daily.objects.filter(date__year=selected_year)
+
+    # Получаем данные о продажах за каждый месяц
+    monthly_sales = Revenue_daily.objects.values('month').annotate(total_sales=Sum('total_sum'))
+    monthly_costs = Costs_by_month.objects.values('month').annotate(total_costs=Sum('amount_of_costs'))
+
+    # Создаем списки для хранения месяцев и сумм продаж
+    months = []
+    sales = []
+    costs = []
+
+    # Проходимся по результатам агрегации и добавляем данные в списки
+    for item in monthly_sales:
+        # Преобразуем номер месяца в название месяца
+        name_of_month = month_name[item['month']]
+        months.append(name_of_month)
+        sales.append(item['total_sales'])
+
+    for item in monthly_costs:
+        costs.append(item['total_costs'])
+
+    profitability = [((x - y) / x * 100) for x, y in zip(sales, costs)]
+
+    # Строим график
+    plt.figure(figsize=(10, 6))
+    plt.bar(months, profitability, color='skyblue')
+    # plt.plot(months, costs, marker='s', linestyle='-', label='Costs')
+    plt.xlabel('Месяц')
+    plt.ylabel('Значение в %')
+    plt.xticks(rotation=45)
+    plt.grid(True)
+    plt.tight_layout()
+    plt.savefig('media/profit.png')
+    image_url = '/media/profit.png'
+    return image_url
+
+
 def index(request):
     logger.info('Home page accessed')
     return render(request, 'analytic_app/main_page.html')
@@ -117,7 +159,8 @@ def costs(request):
             selected_year_name = YEAR_DICT[selected_year]
             image_url = generate_diagram(selected_month)
             return render(request, 'analytic_app/costs.html',
-                      {'chart_image': image_url, 'selected_month': selected_month_name, 'selected_year': selected_year})
+                          {'chart_image': image_url, 'selected_month': selected_month_name,
+                           'selected_year': selected_year})
     else:
         logger.debug('Page with empty form accessed')
         form = MonthAndYearRangeForm()
@@ -141,10 +184,6 @@ def product_range_by_revenue(request):
                   {'form': form})
 
 
-def profitability(request):
-    return render(request, 'analytic_app/profitability.html')
-
-
 def import_file(request):
     if request.method == 'POST' and request.FILES['file']:
         uploaded_file = request.FILES['file']
@@ -159,6 +198,18 @@ def indicators_by_point_of_sale(request):
     image_url = '/media/sales_chart.png'  # Путь к вашему изображению в папке media
     return render(request, 'analytic_app/indicators_by_point_of_sale.html', {'image_url': image_url})
 
-# def my_view_1(request):
-#     image_url = '/media/sales_chart.png'  # Путь к вашему изображению в папке media
-#     return render(request, 'test.html')
+
+def profitability(request):
+    if request.method == 'POST':
+        logger.debug('Page with sales accessed')
+        form = YearRangeForm(request.POST)
+        if form.is_valid():
+            selected_year = form.cleaned_data['year']
+            selected_year_name = YEAR_DICT[selected_year]
+            image_url = generate_profit_graph(selected_year)
+        return render(request, 'analytic_app/profitability.html',
+                      {'chart_image': image_url, 'selected_year': selected_year_name})
+    else:
+        logger.debug('Page with empty form accessed')
+        form = YearRangeForm()
+        return render(request, 'analytic_app/profitability.html', {'form': form})

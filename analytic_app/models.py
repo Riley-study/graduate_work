@@ -14,8 +14,6 @@ class Cost(models.Model):
 class Product(models.Model):
     product_name = models.CharField(max_length=100, default='не указан')
 
-# class Month(models.Model):
-#     month = models.CharField(max_length=30, default='не указан')
 
 class Revenue_daily(models.Model):
     product_name = models.ForeignKey(Product, on_delete=models.CASCADE)

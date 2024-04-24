@@ -21,3 +21,8 @@ class MonthAndYearRangeForm(forms.Form):
     month = forms.ChoiceField(choices=MONTH_CHOICES, label='Выберите месяц')
     year = forms.ChoiceField(choices=YEAR_CHOICES, label='Выберите Год')
     shop = forms.ChoiceField(choices=SHOP_CHOICES, label='Выберите пекарню')
+
+
+class YearRangeForm(forms.Form):
+    year = forms.ChoiceField(choices=YEAR_CHOICES, label='Выберите Год')
+    shop = forms.ChoiceField(choices=SHOP_CHOICES, label='Выберите пекарню')
