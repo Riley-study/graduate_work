@@ -126,7 +126,8 @@ def generate_profit_graph(selected_year):
 
 def index(request):
     logger.info('Home page accessed')
-    return render(request, 'analytic_app/main_page.html')
+    image_url = '/media/logo.png'
+    return render(request, 'analytic_app/main_page.html',  {'chart_image': image_url})
 
 
 def sales(request):
@@ -192,12 +193,6 @@ def import_file(request):
                 destination.write(chunk)
         return render(request, 'analytic_app/import.html', {'filename': uploaded_file.name})
     return render(request, 'analytic_app/import.html')
-
-
-def indicators_by_point_of_sale(request):
-    image_url = '/media/sales_chart.png'  # Путь к вашему изображению в папке media
-    return render(request, 'analytic_app/indicators_by_point_of_sale.html', {'image_url': image_url})
-
 
 def profitability(request):
     if request.method == 'POST':
